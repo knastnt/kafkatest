@@ -5,8 +5,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.lang.Thread.sleep;
@@ -31,8 +34,9 @@ public class KafkatestApplication {
             Thread thread = new Thread(() -> {
                 try {
                     while (true) {
-                        sleep(60000);
-                        kafkaTemplate.send("msg", "currentTime", (new Date()).toString());
+                        sleep(3000);
+                        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send("msg", "currentTime", "сообщение: " + (new SimpleDateFormat("dd MM yyyy HH-mm-ss")).format(new Date()));
+                        future.addCallback(System.out::println, System.err::println);
                     }
                 }catch (InterruptedException e){
                     System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

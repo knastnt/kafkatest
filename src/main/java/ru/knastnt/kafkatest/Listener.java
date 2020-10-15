@@ -15,4 +15,10 @@ public class Listener {
         System.out.println(headers);
         System.out.println(userDTO);
     }
+
+    @KafkaListener(topics = "msg3")
+    public void messageListener(@Payload UserDTO.Address s, @Headers MessageHeaders headers) {
+        System.out.println(headers);
+        System.out.println(s);
+    }
 }

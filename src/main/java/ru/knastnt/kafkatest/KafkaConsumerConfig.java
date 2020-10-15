@@ -22,30 +22,29 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.consumer.group-id}")
     private String kafkaGroupId;
 
-    @Bean
-    public Map<String, Object> consumerConfigs() {
+//    @Bean
+    public <T> ConsumerFactory<String, T> consumerFactory(Class<T> clazz) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaSrv);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaGroupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        return props;
-    }
 
-    @Bean
-    public ConsumerFactory<String, UserDTO> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(
-                consumerConfigs(),
-                new StringDeserializer(),
-                new JsonDeserializer<>(UserDTO.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(clazz));
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, UserDTO> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, UserDTO> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        ConcurrentKafkaListenerContainerFactory<String, UserDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(UserDTO.class));
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, UserDTO.Address> kafkaListenerContainerFactory2() {
+        ConcurrentKafkaListenerContainerFactory<String, UserDTO.Address> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(UserDTO.Address.class));
         return factory;
     }
 

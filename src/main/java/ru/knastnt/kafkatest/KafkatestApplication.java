@@ -36,6 +36,8 @@ public class KafkatestApplication {
 
         @Autowired
         private KafkaTemplate<String, UserDTO> kafkaUserTemplate;
+        @Autowired
+        private KafkaTemplate<String, UserDTO.Address> kafkaUserTemplate2;
 
 
         @Override
@@ -56,6 +58,9 @@ public class KafkatestApplication {
                         //Шлём объект через другой шаблон
                         sleep(2000);
                         ListenableFuture<SendResult<String, UserDTO>> userFuture = kafkaUserTemplate.send("msg2", "user", UserDTO.getTestInstance());
+                        userFuture.addCallback(System.out::println, System.err::println);
+                        sleep(2000);
+                        ListenableFuture<SendResult<String, UserDTO.Address>> userFuture2 = kafkaUserTemplate2.send("msg3", "addr", UserDTO.getTestInstance().getAddress());
                         userFuture.addCallback(System.out::println, System.err::println);
                     }
                 }catch (InterruptedException e){}

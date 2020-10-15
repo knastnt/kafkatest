@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 
@@ -22,28 +24,45 @@ public class KafkatestApplication {
         SpringApplication.run(KafkatestApplication.class, args);
     }
 
+    //it's ok. https://stackoverflow.com/questions/55280173/the-correct-way-for-creation-of-kafkatemplate-in-spring-boot
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+
     @Component
     public static class Runner implements CommandLineRunner{
+
         @Autowired
-        //it's ok. https://stackoverflow.com/questions/55280173/the-correct-way-for-creation-of-kafkatemplate-in-spring-boot
-        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-        private KafkaTemplate<String, String> kafkaTemplate;
+        private KafkaTemplate<String, Object> kafkaTemplate;
+
+
+        @Autowired
+        private KafkaTemplate<String, UserDTO> kafkaUserTemplate;
+
 
         @Override
         public void run(String... args) throws Exception {
             Thread thread = new Thread(() -> {
                 try {
                     while (true) {
-                        sleep(3000);
-                        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send("msg", "currentTime", "сообщение: " + (new SimpleDateFormat("dd MM yyyy HH-mm-ss")).format(new Date()));
+                        //Шлём строку
+                        sleep(2000);
+                        ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("msg", "currentTime", "сообщение: " + (new SimpleDateFormat("dd MM yyyy HH-mm-ss")).format(new Date()));
                         future.addCallback(System.out::println, System.err::println);
+
+                        //Шлём массив
+                        sleep(2000);
+                        future = kafkaTemplate.send("msg", "array", new int[]{1,3,5,7,9,0});
+                        future.addCallback(System.out::println, System.err::println);
+
+                        //Шлём объект через другой шаблон
+                        sleep(2000);
+                        ListenableFuture<SendResult<String, UserDTO>> userFuture = kafkaUserTemplate.send("msg", "user", UserDTO.getTestInstance());
+                        userFuture.addCallback(System.out::println, System.err::println);
                     }
-                }catch (InterruptedException e){
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                }
+                }catch (InterruptedException e){}
             });
             thread.setDaemon(true);
             thread.start();
         }
+
     }
 }

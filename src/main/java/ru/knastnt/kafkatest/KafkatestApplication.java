@@ -55,7 +55,7 @@ public class KafkatestApplication {
 
                         //Шлём объект через другой шаблон
                         sleep(2000);
-                        ListenableFuture<SendResult<String, UserDTO>> userFuture = kafkaUserTemplate.send("msg", "user", UserDTO.getTestInstance());
+                        ListenableFuture<SendResult<String, UserDTO>> userFuture = kafkaUserTemplate.send("msg2", "user", UserDTO.getTestInstance());
                         userFuture.addCallback(System.out::println, System.err::println);
                     }
                 }catch (InterruptedException e){}

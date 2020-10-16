@@ -23,7 +23,7 @@ public class KafkaConsumerConfig {
     private String kafkaGroupId;
 
 
-    public <T> ConsumerFactory<String, T> consumerFactory(Class<T> clazz) {
+    public <T> ConsumerFactory<String, T> consumerJsonFactory(Class<T> clazz) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaSrv);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -35,17 +35,40 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, UserDTO> kafkaListenerContainerFactory1() {
+    public ConcurrentKafkaListenerContainerFactory<String, UserDTO> userKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, UserDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(UserDTO.class));
+        factory.setConsumerFactory(consumerJsonFactory(UserDTO.class));
         return factory;
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, UserDTO.Address> kafkaListenerContainerFactory2() {
+    public ConcurrentKafkaListenerContainerFactory<String, UserDTO.Address> addresKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, UserDTO.Address> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(UserDTO.Address.class));
+        factory.setConsumerFactory(consumerJsonFactory(UserDTO.Address.class));
         return factory;
     }
 
+
+
+
+
+//    @Bean
+//    public ConsumerFactory<String, String> consumerFactory() {
+//        Map<String, Object> config = new HashMap<>();
+//
+//        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.0.239:9092");
+//        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaGroupId);
+//        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//
+//        return new DefaultKafkaConsumerFactory<>(config);
+//    }
+//
+//
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+//        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory();
+//        factory.setConsumerFactory(consumerFactory());
+//        return factory;
+//    }
 }

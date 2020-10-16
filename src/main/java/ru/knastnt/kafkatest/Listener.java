@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class Listener {
 
-    @KafkaListener(topics = "msg2")
+    @KafkaListener(topics = "msg2", containerFactory = "userKafkaListenerContainerFactory")
     public void messageListener(@Payload UserDTO userDTO, @Headers MessageHeaders headers) {
         System.out.println(headers);
         System.out.println(userDTO);
     }
 
-    @KafkaListener(topics = "msg3")
+    @KafkaListener(topics = "msg3", containerFactory = "addresKafkaListenerContainerFactory")
     public void messageListener(@Payload UserDTO.Address s, @Headers MessageHeaders headers) {
         System.out.println(headers);
         System.out.println(s);

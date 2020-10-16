@@ -50,10 +50,10 @@ public class KafkatestApplication {
                         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("msg", "currentTime", "сообщение: " + (new SimpleDateFormat("dd MM yyyy HH-mm-ss")).format(new Date()));
                         future.addCallback(System.out::println, System.err::println);
 
-//                        //Шлём массив
-//                        sleep(2000);
-//                        future = kafkaTemplate.send("msg", "array", new int[]{1,3,5,7,9,0});
-//                        future.addCallback(System.out::println, System.err::println);
+                        //Шлём массив
+                        sleep(2000);
+                        future = kafkaTemplate.send("msg", "array", new int[]{1,3,5,7,9,0});
+                        future.addCallback(System.out::println, System.err::println);
 
                         //Шлём объект через другой шаблон
                         sleep(2000);

@@ -22,8 +22,6 @@ public class KafkaConsumerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaSrv;
-    @Value("${spring.kafka.consumer.group-id}")
-    private String kafkaGroupId;
 
 
     public <T> ConsumerFactory<String, T> consumerFactory(Class<T> clazz) {
@@ -31,7 +29,6 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaSrv);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaGroupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(clazz));

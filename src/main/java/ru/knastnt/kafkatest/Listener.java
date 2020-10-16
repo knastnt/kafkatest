@@ -10,10 +10,6 @@ import org.springframework.stereotype.Component;
 @EnableKafka
 @Component
 public class Listener {
-    @KafkaListener(topics = "msg")
-    public void messageListener(String msg) {
-        System.out.println(msg);
-    }
 
     @KafkaListener(topics = "msg2")
     public void messageListener(@Payload UserDTO userDTO, @Headers MessageHeaders headers) {
